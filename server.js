@@ -15,7 +15,7 @@ const restaurants = {
     cuisine: 'Filipino Fast Food',
     rating: 4.8,
     menu: {
-      'Chickenjoy Meals': [
+      'MCDO Meals': [
         { name: '1-pc Chickenjoy w/ Rice', description: 'Crispy fried chicken with garlic rice and gravy', price: 99 },
         { name: '2-pc Chickenjoy w/ Jolly Spaghetti', description: 'Two pieces of Chickenjoy with sweet-style spaghetti', price: 199 }
       ],
