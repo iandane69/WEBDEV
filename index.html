@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cebu Food Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: #fafafa;
+            color: #1a1a1a;
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.8em;
+            font-weight: 300;
+            color: #1a1a1a;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.1em;
+            font-weight: 300;
+            margin-bottom: 60px;
+        }
+
+        .restaurants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .restaurant-card {
+            background: white;
+            border-radius: 12px;
+            padding: 35px 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #e5e5e5;
+        }
+
+        .restaurant-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+            border-color: #d0d0d0;
+        }
+
+        .restaurant-card h2 {
+            font-size: 1.6em;
+            font-weight: 500;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .restaurant-card .cuisine {
+            color: #888;
+            font-size: 0.95em;
+            margin-bottom: 12px;
+            font-weight: 400;
+        }
+
+        .restaurant-card .rating {
+            color: #1a1a1a;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .menu-section {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            padding: 50px;
+            margin-top: 30px;
+            border: 1px solid #e5e5e5;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .menu-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .menu-header h2 {
+            font-size: 2em;
+            font-weight: 400;
+            color: #1a1a1a;
+        }
+
+        .close-btn {
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s;
+            letter-spacing: 0.3px;
+        }
+
+        .close-btn:hover {
+            background: #333;
+        }
+
+        .menu-category {
+            margin-bottom: 45px;
+        }
+
+        .menu-category h3 {
+            font-size: 1.3em;
+            font-weight: 500;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            padding: 18px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-info {
+            flex: 1;
+            padding-right: 20px;
+        }
+
+        .item-name {
+            font-weight: 500;
+            color: #1a1a1a;
+            font-size: 1.05em;
+            margin-bottom: 4px;
+        }
+
+        .item-description {
+            color: #888;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .item-price {
+            color: #1a1a1a;
+            font-weight: 600;
+            font-size: 1.05em;
+            white-space: nowrap;
+        }
+
+        .locations-section {
+            margin-top: 50px;
+            padding-top: 40px;
+            border-top: 1px solid #e5e5e5;
+        }
+
+        .locations-section h3 {
+            font-size: 1.4em;
+            font-weight: 500;
+            color: #1a1a1a;
+            margin-bottom: 25px;
+        }
+
+        .locations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .location-item {
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 3px solid #1a1a1a;
+        }
+
+        .location-name {
+            font-weight: 500;
+            color: #1a1a1a;
+            margin-bottom: 6px;
+            font-size: 1em;
+        }
+
+        .location-address {
+            color: #888;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 15px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .menu-section {
+                padding: 30px 25px;
+            }
+
+            .menu-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .close-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cebu Food Guide</h1>
+        <p class="subtitle">Discover the best Filipino fast food chains in the city</p>
+        
+        <div class="restaurants-grid">
+            <div class="restaurant-card" onclick="showMenu('jollibee')">
+                <h2>🐝 Jollibee</h2>
+                <p class="cuisine">Filipino Fast Food</p>
+                <p class="rating">★★★★★ 4.8</p>
+            </div>
+
+            <div class="restaurant-card" onclick="showMenu('mang-inasal')">
+                <h2>🍗 Mang Inasal</h2>
+                <p class="cuisine">Grilled Chicken Specialist</p>
+                <p class="rating">★★★★★ 4.7</p>
+            </div>
+
+            <div class="restaurant-card" onclick="showMenu('chowking')">
+                <h2>🥢 Chowking</h2>
+                <p class="cuisine">Chinese-Filipino Fusion</p>
+                <p class="rating">★★★★☆ 4.5</p>
+            </div>
+
+            <div class="restaurant-card" onclick="showMenu('max')">
+                <h2>🍗 Max's Restaurant</h2>
+                <p class="cuisine">Filipino Comfort Food</p>
+                <p class="rating">★★★★★ 4.8</p>
+            </div>
+
+            <div class="restaurant-card" onclick="showMenu('greenwich')">
+                <h2>🍕 Greenwich</h2>
+                <p class="cuisine">Pizza & Pasta</p>
+                <p class="rating">★★★★☆ 4.6</p>
+            </div>
+
+            <div class="restaurant-card" onclick="showMenu('andoks')">
+                <h2>🍗 Andoks</h2>
+                <p class="cuisine">Roasted Chicken</p>
+                <p class="rating">★★★★☆ 4.6</p>
+            </div>
+        </div>
+
+        <!-- Jollibee Menu -->
+        <div id="jollibee" class="menu-section">
+            <div class="menu-header">
+                <h2>🐝 Jollibee</h2>
+                <button class="close-btn" onclick="closeMenu()">Close</button>
+            </div>
+            
+            <div class="menu-category">
+                <h3>Chickenjoy Meals</h3>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">1-pc Chickenjoy w/ Rice</div>
+                        <div class="item-description">Crispy fried chicken with garlic rice and gravy</div>
+                    </div>
+                    <div class="item-price">₱99</div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">2-pc Chickenjoy w/ Jolly Spaghetti</div>
+                        <div class="item-description">Two pieces of Chickenjoy with sweet-style spaghetti</div>
+                    </div>
+                    <div class="item-price">₱199</div>
+                </div>
+            </div>
+
+            <div class="menu-category">
+                <h3>Burgers</h3>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Yumburger</div>
+                        <div class="item-description">Classic burger with special dressing</div>
+                    </div>
+                    <div class="item-price">₱45</div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Cheesy Deluxe Burger</div>
+                        <div class="item-description">Burger with cheese, bacon, and mushrooms</div>
+                    </div>
+                    <div class="item-price">₱99</div>
+                </div>
+            </div>
+
+            <div class="menu-category">
+                <h3>Jolly Spaghetti & Others</h3>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Jolly Spaghetti</div>
+                        <div class="item-description">Sweet-style spaghetti with hotdog slices</div>
+                    </div>
+                    <div class="item-price">₱75</div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Palabok</div>
+                        <div class="item-description">Rice noodles with shrimp sauce and toppings</div>
+                    </div>
+                    <div class="item-price">₱85</div>
+                </div>
+            </div>
+
+            <div class="locations-section">
+                <h3>📍 Locations in Cebu City</h3>
+                <div class="locations-grid">
+                    <div class="location-item">
+                        <div class="location-name">SM City Cebu</div>
+                        <div class="location-address">North Reclamation Area</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">Ayala Center Cebu</div>
+                        <div class="location-address">Cebu Business Park</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">Robinson's Cybergate</div>
+                        <div class="location-address">Fuente Osmeña</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">Colon Street</div>
+                        <div class="location-address">Downtown Cebu City</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">IT Park</div>
+                        <div class="location-address">Apas, Lahug</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">Banilad Town Centre</div>
+                        <div class="location-address">Maria Luisa Road, Banilad</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mang Inasal Menu -->
+        <div id="mang-inasal" class="menu-section">
+            <div class="menu-header">
+                <h2>🍗 Mang Inasal</h2>
+                <button class="close-btn" onclick="closeMenu()">Close</button>
+            </div>
+            
+            <div class="menu-category">
+                <h3>Paa & Pecho Meals</h3>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">PM1 - Paa Large w/ Unlimited Rice</div>
+                        <div class="item-description">Chicken leg quarter with unlimited rice and soup</div>
+                    </div>
+                    <div class="item-price">₱135</div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">PM2 - Pecho Large w/ Unlimited Rice</div>
+                        <div class="item-description">Chicken breast with unlimited rice and soup</div>
+                    </div>
+                    <div class="item-price">₱150</div>
+                </div>
+            </div>
+
+            <div class="menu-category">
+                <h3>Ihaw-Sarap Meals</h3>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Pork BBQ (2 sticks) w/ Rice</div>
+                        <div class="item-description">Grilled pork skewers with rice and drink</div>
+                    </div>
+                    <div class="item-price">₱119</div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Bangus (Milkfish) w/ Rice</div>
+                        <div class="item-description">Grilled milkfish belly with rice and soup</div>
+                    </div>
+                    <div class="item-price">₱165</div>
+                </div>
+            </div>
+
+            <div class="locations-section">
+                <h3>📍 Locations in Cebu City</h3>
+                <div class="locations-grid">
+                    <div class="location-item">
+                        <div class="location-name">SM City Cebu</div>
+                        <div class="location-address">North Reclamation Area</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">Ayala Center Cebu</div>
+                        <div class="location-address">Cebu Business Park</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">Gaisano Country Mall</div>
+                        <div class="location-address">Banilad</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">JY Square Mall</div>
+                        <div class="location-address">Lahug</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">Elizabeth Mall</div>
+                        <div class="location-address">Fuente Osmeña</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chowking Menu -->
+        <div id="chowking" class="menu-section">
+            <div class="menu-header">
+                <h2>🥢 Chowking</h2>
+                <button class="close-btn" onclick="closeMenu()">Close</button>
+            </div>
+            
+            <div class="menu-category">
+                <h3>Lauriat Meals</h3>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Pork Chao Fan Lauriat</div>
+                        <div class="item-description">Pork fried rice with siomai and spring roll</div>
+                    </div>
+                    <div class="item-price">₱159</div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Sweet & Sour Pork Lauriat</div>
+                        <div class="item-description">Sweet & sour pork with rice, siomai, and drink</div>
+                    </div>
+                    <div class="item-price">₱189</div>
+                </div>
+            </div>
+
+            <div class="menu-category">
+                <h3>Noodles</h3>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Beef Wanton Mami</div>
+                        <div class="item-description">Egg noodles with beef and wanton dumplings</div>
+                    </div>
+                    <div class="item-price">₱99</div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Pancit Canton</div>
+                        <div class="item-description">Stir-fried noodles with vegetables and meat</div>
+                    </div>
+                    <div class="item-price">₱115</div>
+                </div>
+            </div>
+
+            <div class="menu-category">
+                <h3>Dim Sum</h3>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Pork Siomai (4 pcs)</div>
+                        <div class="item-description">Steamed pork dumplings with soy sauce</div>
+                    </div>
+                    <div class="item-price">₱69</div>
+                </div>
+            </div>
+
+            <div class="locations-section">
+                <h3>📍 Locations in Cebu City</h3>
+                <div class="locations-grid">
+                    <div class="location-item">
+                        <div class="location-name">SM City Cebu</div>
+                        <div class="location-address">North Reclamation Area</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">Ayala Center Cebu</div>
+                        <div class="location-address">Cebu Business Park</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">Robinson's Cybergate</div>
+                        <div class="location-address">Fuente Osmeña</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">Gaisano Grand Mall</div>
+                        <div class="location-address">Colon Street</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">AS Fortuna</div>
+                        <div class="location-address">Mandaue City</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Max's Restaurant Menu -->
+        <div id="max" class="menu-section">
+            <div class="menu-header">
+                <h2>🍗 Max's Restaurant</h2>
+                <button class="close-btn" onclick="closeMenu()">Close</button>
+            </div>
+            
+            <div class="menu-category">
+                <h3>Fried Chicken</h3>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Max's Fried Chicken (1/4)</div>
+                        <div class="item-description">World-famous fried chicken, quarter serving</div>
+                    </div>
+                    <div class="item-price">₱175</div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Max's Fried Chicken (Whole)</div>
+                        <div class="item-description">Whole chicken, good for sharing</div>
+                    </div>
+                    <div class="item-price">₱650</div>
+                </div>
+            </div>
+
+            <div class="menu-category">
+                <h3>Filipino Favorites</h3>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Kare-Kare</div>
+                        <div class="item-description">Oxtail and vegetables in peanut sauce</div>
+                    </div>
+                    <div class="item-price">₱465</div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Pancit Canton Bam-I</div>
+                        <div class="item-description">Mixed noodles with toppings, good for 3-4</div>
+                    </div>
+                    <div class="item-price">₱350</div>
+                </div>
+            </div>
+
+            <div class="locations-section">
+                <h3>📍 Locations in Cebu City</h3>
+                <div class="locations-grid">
+                    <div class="location-item">
+                        <div class="location-name">Ayala Center Cebu</div>
+                        <div class="location-address">Cebu Business Park</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">SM City Cebu</div>
+                        <div class="location-address">North Reclamation Area</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">Banilad Town Centre</div>
+                        <div class="location-address">Maria Luisa Road, Banilad</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">Archbishop Reyes Avenue</div>
+                        <div class="location-address">Capitol Site</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">JY Square Mall</div>
+                        <div class="location-address">Lahug</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Greenwich Menu -->
+        <div id="greenwich" class="menu-section">
+            <div class="menu-header">
+                <h2>🍕 Greenwich</h2>
+                <button class="close-btn" onclick="closeMenu()">Close</button>
+            </div>
+            
+            <div class="menu-category">
+                <h3>Pizzas</h3>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Hawaiian Overload (Solo)</div>
+                        <div class="item-description">Ham, pineapple, and cheese</div>
+                    </div>
+                    <div class="item-price">₱149</div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Ultimate Overload (Family Size)</div>
+                        <div class="item-description">Pepperoni, ham, bacon, sausage, and beef</div>
+                    </div>
+                    <div class="item-price">₱499</div>
+                </div>
+            </div>
+
+            <div class="menu-category">
+                <h3>Pasta</h3>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Carbonara Supreme</div>
+                        <div class="item-description">Creamy white sauce with bacon and mushrooms</div>
+                    </div>
+                    <div class="item-price">₱125</div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Lasagna Supreme</div>
+                        <div class="item-description">Layered pasta with meat sauce and cheese</div>
+                    </div>
+                    <div class="item-price">₱135</div>
+                </div>
+            </div>
+
+            <div class="menu-category">
+                <h3>Chicken</h3>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Chicken 'N' Cheesy Pops (6 pcs)</div>
+                        <div class="item-description">Crispy chicken nuggets with cheese filling</div>
+                    </div>
+                    <div class="item-price">₱99</div>
+                </div>
+            </div>
+
+            <div class="locations-section">
+                <h3>📍 Locations in Cebu City</h3>
+                <div class="locations-grid">
+                    <div class="location-item">
+                        <div class="location-name">SM City Cebu</div>
+                        <div class="location-address">North Reclamation Area</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">Ayala Center Cebu</div>
+                        <div class="location-address">Cebu Business Park</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">Robinson's Cybergate</div>
+                        <div class="location-address">Fuente Osmeña</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">Gaisano Country Mall</div>
+                        <div class="location-address">Banilad</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">Colon Street</div>
+                        <div class="location-address">Downtown Cebu City</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Andok's Menu -->
+        <div id="andoks" class="menu-section">
+            <div class="menu-header">
+                <h2>🍗 Andok's</h2>
+                <button class="close-btn" onclick="closeMenu()">Close</button>
+            </div>
+            
+            <div class="menu-category">
+                <h3>Litson Manok</h3>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Original Litson Manok</div>
+                        <div class="item-description">Whole roasted chicken with signature taste</div>
+                    </div>
+                    <div class="item-price">₱225</div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Spicy Litson Manok</div>
+                        <div class="item-description">Whole roasted chicken with spicy flavor</div>
+                    </div>
+                    <div class="item-price">₱225</div>
+                </div>
+            </div>
+
+            <div class="menu-category">
+                <h3>Meals</h3>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">1/4 Chicken Meal</div>
+                        <div class="item-description">Quarter chicken with rice and drinks</div>
+                    </div>
+                    <div class="item-price">₱89</div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Pork BBQ (2 sticks) w/ Rice</div>
+                        <div class="item-description">Grilled pork skewers with rice</div>
+                    </div>
+                    <div class="item-price">₱95</div>
+                </div>
+            </div>
+
+            <div class="menu-category">
+                <h3>Sides</h3>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Tofu Sisig</div>
+                        <div class="item-description">Sizzling tofu with onions and peppers</div>
+                    </div>
+                    <div class="item-price">₱75</div>
+                </div>
+                <div class="menu-item">
+                    <div class="item-info">
+                        <div class="item-name">Palabok</div>
+                        <div class="item-description">Rice noodles with shrimp sauce</div>
+                    </div>
+                    <div class="item-price">₱65</div>
+                </div>
+            </div>
+
+            <div class="locations-section">
+                <h3>📍 Locations in Cebu City</h3>
+                <div class="locations-grid">
+                    <div class="location-item">
+                        <div class="location-name">Mabolo</div>
+                        <div class="location-address">N. Escario Street</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">Capitol Site</div>
+                        <div class="location-address">Osmeña Boulevard</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">Talamban</div>
+                        <div class="location-address">Talamban Area</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">Basak</div>
+                        <div class="location-address">N. Bacalso Avenue</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">Labangon</div>
+                        <div class="location-address">Leon Kilat Street</div>
+                    </div>
+                    <div class="location-item">
+                        <div class="location-name">Mango Avenue</div>
+                        <div class="location-address">Downtown Cebu City</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showMenu(menuId) {
+            const allMenus = document.querySelectorAll('.menu-section');
+            allMenus.forEach(menu => menu.classList.remove('active'));
+            
+            const selectedMenu = document.getElementById(menuId);
+            selectedMenu.classList.add('active');
+            
+            selectedMenu.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function closeMenu() {
+            const allMenus = document.querySelectorAll('.menu-section');
+            allMenus.forEach(menu => menu.classList.remove('active'));
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
